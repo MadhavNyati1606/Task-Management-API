@@ -1,9 +1,15 @@
-const getAllTasks = async () => {
-  res.send("register User");
+const { StatusCodes } = require("http-status-codes");
+const Task = require("../models/task");
+const getAllTasks = async (req, res) => {
+  const tasks = await Task.find({ createdBy: req.user.userId });
+  res.status(StatusCodes.OK).json({ tasks, number: tasks.length });
 };
 
-const createTask = async () => {
-  res.send("login User");
+const createTask = async (req, res) => {
+  const { userId: id, name } = req.user;
+  req.body.createdBy = id;
+  const task = await Task.create({ ...req.body });
+  res.status(StatusCodes.CREATED).json({ task });
 };
 
 const getTask = async () => {

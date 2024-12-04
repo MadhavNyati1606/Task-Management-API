@@ -4,7 +4,7 @@ const tokenAuthentication = async (req, res, next) => {
   const auth = req.headers.authorization;
 
   if (!auth || !auth.startsWith("Bearer ")) {
-    throw new BadRequestError("Invalid request. Please check");
+    throw new UnauthenticatedError("Authorization invalid.");
   }
   const token = auth.split(" ")[1];
 
