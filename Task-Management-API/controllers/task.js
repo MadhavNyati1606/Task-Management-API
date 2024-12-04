@@ -2,7 +2,12 @@ const { StatusCodes } = require("http-status-codes");
 const Task = require("../models/task");
 const { NotFoundError, BadRequestError } = require("../errors");
 const getAllTasks = async (req, res) => {
-  const tasks = await Task.find({ createdBy: req.user.userId });
+  const { category } = req.query;
+  const queryObject = { createdBy: req.user.userId };
+  if (category) {
+    queryObject.category = category;
+  }
+  const tasks = await Task.find(queryObject);
   res.status(StatusCodes.OK).json({ tasks, number: tasks.length });
 };
 
