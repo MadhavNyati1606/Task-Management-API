@@ -7,7 +7,12 @@ const getAllTasks = async (req, res) => {
   if (category) {
     queryObject.category = category;
   }
-  const tasks = await Task.find(queryObject);
+  const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+  const page = req.query.page ? parseInt(req.query.page) : 1;
+  const skip = (page - 1) * limit;
+
+  const tasks = await Task.find(queryObject).limit(limit).skip(skip);
+
   res.status(StatusCodes.OK).json({ tasks, number: tasks.length });
 };
 
