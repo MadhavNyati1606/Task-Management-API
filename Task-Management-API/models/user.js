@@ -49,10 +49,20 @@ userSchema.methods.comparePassword = async function (password) {
 
 userSchema.methods.generateAuthToken = function () {
   return jwt.sign(
-    { id: this._id, name: this.name, role: this.role },
+    { id: this._id, email: this.email, role: this.role },
     process.env.JWT_SECRET_KEY,
     {
       expiresIn: process.env.JWT_EXPIRES_IN,
+    }
+  );
+};
+
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    { id: this._id, email: this.email, role: this.role },
+    process.env.JWT_REFRESH_SECRET_KEY,
+    {
+      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
     }
   );
 };
