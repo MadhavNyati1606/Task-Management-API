@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { UnauthenticatedError, BadRequestError } = require("../errors");
-const tokenAuthentication = async (req, res, next) => {
+const adminAuth = async (req, res, next) => {
   const auth = req.headers.authorization;
 
   if (!auth || !auth.startsWith("Bearer ")) {
@@ -10,6 +10,11 @@ const tokenAuthentication = async (req, res, next) => {
 
   try {
     const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    if (decode.role !== "admin") {
+      throw new UnauthenticatedError(
+        "Authorization allowed for only admin role users"
+      );
+    }
     req.user = { userId: decode.id, name: decode.name, role: decode.role };
     next();
   } catch (err) {
@@ -17,4 +22,4 @@ const tokenAuthentication = async (req, res, next) => {
   }
 };
 
-module.exports = tokenAuthentication;
+module.exports = adminAuth;

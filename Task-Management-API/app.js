@@ -4,17 +4,20 @@ const express = require("express");
 const app = express();
 const authRouter = require("./routes/auth");
 const taskRouter = require("./routes/task");
+const adminRouter = require("./routes/admin");
 
 const connectDB = require("./db/connect");
 const notFound = require("./middleware/not-found");
 const errorHandler = require("./middleware/error-handler");
 const tokenAuthentication = require("./middleware/authentication");
+const adminAuth = require("./middleware/adminAuth");
 
 app.use(express.json());
 
 //routes
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/task", tokenAuthentication, taskRouter);
+app.use("/api/v1/admin/task", adminAuth, adminRouter);
+app.use("/api/v1/user/task", tokenAuthentication, taskRouter);
 
 app.use(notFound);
 app.use(errorHandler);

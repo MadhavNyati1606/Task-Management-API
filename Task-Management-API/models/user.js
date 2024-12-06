@@ -27,6 +27,12 @@ const userSchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 15,
   },
+
+  role: {
+    type: String,
+    enum: ["admin", "user"],
+    default: "user",
+  },
 });
 
 userSchema.pre("save", async function (next) {
@@ -43,7 +49,7 @@ userSchema.methods.comparePassword = async function (password) {
 
 userSchema.methods.generateAuthToken = function () {
   return jwt.sign(
-    { id: this._id, name: this.name },
+    { id: this._id, name: this.name, role: this.role },
     process.env.JWT_SECRET_KEY,
     {
       expiresIn: process.env.JWT_EXPIRES_IN,
