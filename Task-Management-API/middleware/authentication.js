@@ -10,7 +10,7 @@ const tokenAuthentication = async (req, res, next) => {
 
   try {
     const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.user = { userId: decode.id, name: decode.name, role: decode.role };
+    req.user = { userId: decode.id, email: decode.email, role: decode.role };
     next();
   } catch (err) {
     throw new UnauthenticatedError("Authorization Invalid");

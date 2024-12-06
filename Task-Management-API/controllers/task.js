@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const Task = require("../models/task");
 const { NotFoundError, BadRequestError } = require("../errors");
+const sendEmail = require("../utils/emailService");
 const getAllTasks = async (req, res) => {
   const { category, sort, completed, numericFilters } = req.query;
   const queryObject = { createdBy: req.user.userId };
@@ -53,9 +54,18 @@ const getAllTasks = async (req, res) => {
 };
 
 const createTask = async (req, res) => {
-  const { userId: id, name } = req.user;
+  const { userId: id, email } = req.user;
   req.body.createdBy = id;
   const task = await Task.create({ ...req.body });
+  try {
+    await sendEmail(
+      email,
+      "Task created successfully",
+      `Your task  ${task.title} has been created and is due on ${task.dueDate}`
+    );
+  } catch (error) {
+    console.error("Failed to send task creation email: ", error.message);
+  }
   res.status(StatusCodes.CREATED).json({ task });
 };
 
